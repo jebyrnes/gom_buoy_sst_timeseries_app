@@ -79,6 +79,16 @@ ui <- fluidPage(
                plotlyOutput("timeseries")
         ),
         
+    ),
+    
+    fluidRow(
+        column(12,
+               HTML("Data are taken from <a href='https://coastwatch.noaa.gov/cwn/index.html'> NOAA
+                    Coastwatch's</a> <a href=https://coastwatch.pfeg.noaa.gov/erddap/index.html>ERDDAP
+                    server</a> using the <a href=https://cran.r-project.org/web/packages/rerddap/index.html>
+                    rerddap</a> library in R. For more, see the <a href=https://www.ndbc.noaa.gov/>National 
+                    Buoy Data Center</a> and code for this Shiny app available 
+                    <a href=https://github.com/jebyrnes/gom_buoy_sst_timeseries_app>here</a>."))
     )
 
 )
