@@ -38,6 +38,7 @@ get_buoydata_erddap <- function(year_start, year_end, station){
 #-------
 # summarize data function
 #--------
+
 summarize_bdata <- function(bdata){
     bdata |>
        # mutate(time = ymd_hms(time)) |>
@@ -46,43 +47,10 @@ summarize_bdata <- function(bdata){
                   .groups = "drop") |>
         mutate(time = ymd(paste(year, month, day, sep = "-")))
 }
-    
-#44029
-#bdata <- map_df(c(2004:2008,2011:2022), ~buoy("stdmet", buoyid = 44029, year = .x)$data)
-#bdata <- 
-# get_buoydata_erddap(2001, 2022, 44029) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44029.csv")
 
-
-
-
-#44013
-#bdata <- map_df(1984:2022, ~buoy("stdmet", buoyid = 44013, year = .x)$data)
-# get_buoydata_erddap(1984, 2022, 44013) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44013.csv")
-# 
-# 
-# get_buoydata_erddap(1984, 2022, 44098) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44098.csv")
-# 
-# get_buoydata_erddap(1984, 2022, 44018) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44018.csv")
-# 
-# get_buoydata_erddap(1984, 2022, 44090) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44090.csv")
-# 
-# get_buoydata_erddap(1984, 2022, 44030) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44090.csv")
-# 
-# get_buoydata_erddap(1984, 2022, 44005) |>
-#     summarize_bdata() |>
-#     write_csv(file="data/buoy_history_44005.csv")
+#-------
+# Get Buoy Info
+#--------
 
 buoys <- c(44013, 44018, 44090, 44030, 44005, 44029, 44032, 44037, 44034, 44027, 44011#, 
            #44150, #oh, canada!
@@ -97,6 +65,11 @@ binfo <- buoy_stations() |>
 
 write_csv(binfo, "data/buoy_info.csv")
 
+
+#-------
+# Go through Buoys and use functions above to get environmental records
+#--------
+
 walk(buoys, ~ get_buoydata_erddap(1984, 2022, .x) |>
          summarize_bdata() |>
          write_csv(file=glue("data/buoy_history_{.x}.csv")),
@@ -109,16 +82,3 @@ walk(buoys, ~ get_buoydata_erddap(1984, 2022, .x) |>
 # ggplot(b[[1]] |> mutate(plot_time = ymd(paste(year, month, day, sep = "-"))),
 #        aes(x = plot_time, y = sea_surface_temperature)) +
 #     geom_line()
-
-# bdata <- bdata |>
-#     mutate(time = ymd_hms(time)) |>
-#     group_by(year = year(time), month = month(time), day = day(time)) |>
-#     summarize(across(wind_dir:water_level, ~ mean(.x, na.rm = TRUE)),
-#               .groups = "drop") |>
-#     mutate(time = ymd(paste(year, month, day, sep = "-")))
-# 
-# #-------
-# # and write out results
-# #--------
-# write_csv(bdata, file="data/buoy_history_44029.csv")
-
