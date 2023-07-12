@@ -64,11 +64,18 @@ ui <- fluidPage(
     
     # row layout
     fluidRow(
-        column(12,
+        column(4,
                selectInput("buoy_id",
                            label = "Which Buoy?",
                            choices = binfo$station,
-                           selected = 44013))
+                           selected = 44013)
+        ),
+        column(8,
+               selectInput("c_or_f",
+                           label = "C of F?",
+                           choices = c("C", "F"),
+                           selected = "C")
+        )
     ),
     
     fluidRow(
@@ -87,7 +94,8 @@ ui <- fluidPage(
                     Coastwatch's</a> <a href=https://coastwatch.pfeg.noaa.gov/erddap/index.html>ERDDAP
                     server</a> using the <a href=https://cran.r-project.org/web/packages/rerddap/index.html>
                     rerddap</a> library in R. For more, see the <a href=https://www.ndbc.noaa.gov/>National 
-                    Buoy Data Center</a> and code for this Shiny app available 
+                    Buoy Data Center</a> or an interpolated map from the <a href=https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.graph?analysed_sst%5B(2023-07-10T09:00:00Z)%5D%5B(40.645):(47.175)%5D%5B(-71.655):(-65.125)%5D&.draw=surface&.vars=longitude%7Clatitude%7Canalysed_sst&.colorBar=%7C%7C%7C%7C%7C&.bgColor=0xffccccff>
+                    MURSST product centered on the GOM - just remember to change the time to the current day</a>. Code for this Shiny app available 
                     <a href=https://github.com/jebyrnes/gom_buoy_sst_timeseries_app>here</a>."))
     )
 
@@ -119,9 +127,16 @@ server <- function(input, output) {
     
     # for plotting
     all_bdata <- reactive({
-        bind_rows(bdata(), current_bdata())|>
+        ret <- bind_rows(bdata(), current_bdata())|>
             mutate(plot_time = ymd(paste("2000", month, day, sep = "-")),#arbitrary year
                    date = paste(year, month, day, sep = "-")) 
+        
+        if(input$c_or_f =="F"){
+            ret <- ret |>
+             mutate(sea_surface_temperature = sea_surface_temperature*(9/5)+32)
+        }
+        
+        ret
         
     })
     
@@ -139,11 +154,13 @@ server <- function(input, output) {
         
         yrs_before <- length(unique(all_bdata()$year))-2
         
+        
         tseries <- ggplot(all_bdata(),
                           aes(x = plot_time, y = sea_surface_temperature, 
                               color = as.character(year),
                               label = date)) +
             geom_line() +
+            theme_bw() +
             scale_x_date(date_labels = "%B", date_breaks = "1 month") +
             easy_rotate_x_labels(angle = 45, side = "right") +
             easy_legend_at("bottom") +
