@@ -8,6 +8,8 @@ get_buoydata_erddap <- function(year_start, year_end, station){
     station <- toupper(station)
     
     tabledap(x ="cwwcNDBCMet",
+             url = "https://upwell.pfeg.noaa.gov/erddap/",
+             #url = "https://polarwatch.noaa.gov/erddap/",
              glue('station="{station}"'),
              glue('time>={year_start}-01-01'), 
              glue('time<={year_end}-12-31'),
