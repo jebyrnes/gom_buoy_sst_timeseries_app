@@ -70,7 +70,8 @@ write_csv(binfo, "data/buoy_info.csv")
 # Go through Buoys and use functions above to get environmental records
 #--------
 
-walk(buoys, ~ get_buoydata_erddap(1984, 2023, .x) |>
+walk(buoys, ~
+         get_buoydata_erddap(1984, 2024, .x) |>
          summarize_bdata() |>
          write_csv(file=glue("data/buoy_history_{.x}.csv")),
      .progress=TRUE)
