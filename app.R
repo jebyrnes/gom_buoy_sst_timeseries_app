@@ -21,7 +21,7 @@ library(glue)
 source("buoy_functions.R")
 
 
-thisyear <- 2025
+thisyear <- 2026
 
 binfo <- read_csv("data/buoy_info.csv",
                   show_col_types = FALSE) |>

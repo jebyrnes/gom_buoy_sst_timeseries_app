@@ -71,7 +71,7 @@ write_csv(binfo, "data/buoy_info.csv")
 #--------
 
 walk(buoys, ~
-         get_buoydata_erddap(1984, 2024, .x) |>
+         get_buoydata_erddap(1984, 2025, .x) |>
          summarize_bdata() |>
          write_csv(file=glue("data/buoy_history_{.x}.csv")),
      .progress=TRUE)
